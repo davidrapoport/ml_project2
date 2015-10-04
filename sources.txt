@@ -1,0 +1,6 @@
+http://people.csail.mit.edu/jrennie/papers/icml03-nb.pdf
+https://en.wikipedia.org/wiki/Naive_Bayes_classifier
+http://scikit-learn.org/stable/modules/naive_bayes.html
+http://www.cs.mcgill.ca/~jpineau/comp598/Lectures/05LinearClassificationContd-publish.pdf
+http://nlp.stanford.edu/IR-book/html/htmledition/naive-bayes-text-classification-1.html
+https://en.wikipedia.org/wiki/Tf%E2%80%93idf
