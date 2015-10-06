@@ -1,3 +1,4 @@
-*** Classification of NPR Interviews ***
+##Classification of NPR Interviews
 
-***Ethan MacDonald, David Rapoport, Charlie Bloomfield***
+######Ethan MacDonald, David Rapoport, Charlie Bloomfield
+######Created for Comp 598
