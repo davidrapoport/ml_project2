@@ -2,3 +2,6 @@
 *.swp
 *~
 data/*
+/venv
+.idea
+*.iml
