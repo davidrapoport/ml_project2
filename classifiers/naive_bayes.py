@@ -1,4 +1,5 @@
 from scipy.stats import norm
+from sklearn.preprocessing import StandardScaler
 import pdb, math
 import numpy as np
 
@@ -36,29 +37,24 @@ class NaiveBayes(object):
         self.x_and_y_count = np.zeros((self.M, self.num_classes))
         feature_transpose = features.transpose()
         targets_transpose = targets.transpose()[0]
-        for feature_num, feature_col in enumerate(feature_transpose):
-            if np.logical_or(feature_col == 0, feature_col == 1).all():
-                # Binary data
-                for cnt, y in enumerate(self.classes):
-                    indices = np.logical_and(feature_col == 1, targets_transpose == y)
-                    self.x_given_y[feature_num, cnt] = (np.sum(indices) + self.l)/(self.num_y[cnt] + self.alpha * self.l) 
-                    self.x_and_y_count[feature_num, cnt] = np.sum(indices)
+        for cnt, y in enumerate(self.classes):
+            X_in_class = features[targets_transpose==y]
+            self.x_given_y[:, cnt] = (X_in_class.sum(0) + self.l)/(self.num_y[cnt] + self.alpha * self.l) 
+            self.x_and_y_count[:, cnt] = X_in_class.sum(0)
                
     def _train_continuous(self, features, targets):  
         # Non binary data
         self.mean = np.zeros((self.M, self.num_classes))
         self.std = np.zeros((self.M, self.num_classes))
         targets_transpose = targets.transpose()[0]
-        for feature_num, feature_col in enumerate(features.transpose()):
-            for cnt, y in enumerate(self.classes):
-                x_in_class = feature_col[targets_transpose == y]
-                mean = x_in_class.mean()
-                std = x_in_class.std()
-                if not x_in_class.size:
-                    mean = feature_col.mean()
-                    std = feature_col.std()
-                self.mean[feature_num, cnt] = mean
-                self.std[feature_num, cnt] = std
+        for cnt, y in enumerate(self.classes):
+            s = StandardScaler(with_mean=False)
+            x_in_class = features[targets_transpose == y]
+            mean = x_in_class.mean(0)
+            s.fit(x_in_class)
+            std = s.std_
+            self.mean[:, cnt] = mean
+            self.std[:, cnt] = std
 
     def _train_multinomial(self, features, targets):
         # Train when all of the features are word counts
