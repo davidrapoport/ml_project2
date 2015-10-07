@@ -4,3 +4,5 @@ http://scikit-learn.org/stable/modules/naive_bayes.html
 http://www.cs.mcgill.ca/~jpineau/comp598/Lectures/05LinearClassificationContd-publish.pdf
 http://nlp.stanford.edu/IR-book/html/htmledition/naive-bayes-text-classification-1.html
 https://en.wikipedia.org/wiki/Tf%E2%80%93idf
+http://www.cs.rit.edu/~nan2563/feature_selection.pdf
+http://www.jmlr.org/papers/volume3/forman03a/forman03a_full.pdf
