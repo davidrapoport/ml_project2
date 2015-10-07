@@ -1,12 +1,20 @@
 __author__ = 'Charlie'
 
 import numpy as np
+from distance_functions import cosine_distance
 import heapq
 
 class KNearestNeighbor(object):
+    """
+    Bias/Variance Tradeoff
 
-    def __init__(self, k=1):
+    Bias tends to be high when k is high and low when k is low.
+    Variance tends to be high when k is low and low when k is high
+    """
+
+    def __init__(self, k=1, distance=cosine_distance):
         self.k = k
+        self.distance = distance
 
     def train(self, features, targets):
         """
@@ -29,7 +37,7 @@ class KNearestNeighbor(object):
         neighbors = []
         for index, row in enumerate(self.features.tolist()):
             neighbor_class = self.targets[index]
-            neighbor_distance = np.linalg.norm(vector - np.array(row))
+            neighbor_distance = self.distance(vector, np.array(row))
             heapq.heappush(neighbors, (neighbor_distance, neighbor_class))
 
         k_nearest = heapq.nlargest(self.k, neighbors) #take top k values off heap as the k nearest neighbors
@@ -43,4 +51,5 @@ class KNearestNeighbor(object):
         :return: 1d numpy matrix of predicted classifications
         """
         return np.apply_along_axis(self._classify, axis=1, arr=observed)
+
 
