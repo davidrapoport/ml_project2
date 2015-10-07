@@ -21,10 +21,10 @@ def cosine_distance(source, target):
     """
     :param source: 1d numpy array
     :param target: 1d numpy array
-    :return: cosine similarity between to vectors
+    :return: 1 minus the cosine similarity between to vectors
     :see: https://en.wikipedia.org/wiki/Cosine_similarity
     """
-    def cosine_similarity(source, target):
-        return np.inner(source, target) / (np.linalg.norm(source) * np.linalg.norm(target))
+    def cosine_similarity(s, t):
+        return np.inner(s, t) / (np.linalg.norm(s) * np.linalg.norm(t))
 
     return 1 - cosine_similarity(source, target)
