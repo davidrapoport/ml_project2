@@ -53,7 +53,11 @@ def read_input_file():
             if not quick_n_dirty:
                 sent = features[1].strip().lower()
                 l = wordpunct_tokenize(sent)
-                l = [lemmatizer.lemmatize(word) for word in l if len(word)>2 and word.isalpha()]
+                
+                def lemmatize_and_cache(word, d={}):
+                    return d.setdefault(word,lemmatizer.lemmatize(word))
+
+                l = [lemmatize_and_cache(word) for word in l if len(word)>2 and word.isalpha()]
                 sent = " ".join(l)
                 lines.append(sent)
             else:
@@ -61,13 +65,19 @@ def read_input_file():
             targets.append(int(features[2].strip()))
     return lines, targets
 
-# lines, targets = read_input_file()
-#
-# output = np.zeros((len(targets),1))
-# output[:,0] = targets
-# np.save("data/targets", output)
+lines, targets = [], []
 
-def _generate_dataset(vect_args, file_name, save_to_file=True):
+def _generate_dataset(vect_args, file_name, save_to_file=True, d={}):
+    if not d.get("lines") or not d.get("targets"):
+        lines, targets = read_input_file()
+        output = np.zeros((len(targets),1))
+        output[:,0] = targets
+        np.save("data/targets", output)
+        d['lines'] = lines
+        d['output'] = output
+    else:
+        lines = d['lines']
+        output = d['output']
     count_vect = CountVectorizer(**vect_args)
     X = count_vect.fit_transform(lines)
     if save_to_file:
