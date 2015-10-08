@@ -21,8 +21,9 @@ np.random.seed(1234)
 
 lemmatizer = WordNetLemmatizer()
 pattern = r"(\d*),\"(.*)\",(\d*)"
-stopwords = list(stopwords.words())
+stopwords = list(stopwords.words("english"))
 stopwords.append("__EOS__")
+quick_n_dirty = True
 
 def tokenize(s):
     l = wordpunct_tokenize(s)
@@ -49,11 +50,14 @@ def read_input_file():
                 features = re.findall(pattern,line)[0]
             else:
                 features = line.split(",")
-            sent = features[1].strip().lower()
-            l = wordpunct_tokenize(sent)
-            l = [lemmatizer.lemmatize(word) for word in l if len(word)>2 and word.isalpha()]
-            sent = " ".join(l)
-            lines.append(sent)
+            if not quick_n_dirty:
+                sent = features[1].strip().lower()
+                l = wordpunct_tokenize(sent)
+                l = [lemmatizer.lemmatize(word) for word in l if len(word)>2 and word.isalpha()]
+                sent = " ".join(l)
+                lines.append(sent)
+            else:
+                lines.append(features[1].strip().lower())
             targets.append(int(features[2].strip()))
     return lines, targets
 
