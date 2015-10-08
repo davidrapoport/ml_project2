@@ -1,17 +1,18 @@
 __author__ = 'Charlie'
 
-import classifiers.k_nearest_neighbor
+import classifiers.k_nearest_neighbor as kNN
 import unittest
 import generate_dataset
+
 
 class TestClassifiers(unittest.TestCase):
 
     def test_k_nearest_neighbor_no_runtime_errors(self):
-        knn = classifiers.k_nearest_neighbor.KNearestNeighbor()
+        k = kNN.KNearestNeighbor()
         X, Y, _ = generate_dataset.generate_test1()
 
-        knn.train(X, Y)
-        predictions = knn.predict(X)
+        k.train(X, Y)
+        predictions = k.predict(X)
 
         self.assertEqual(predictions.shape, X.shape)
 
