@@ -35,13 +35,13 @@ class KNearestNeighbor(object):
         :return: int, representing the feature vector's classification
         """
         neighbors = []
-        for index, row in enumerate(self.features.tolist()):
+        for index in range(self.N):
             neighbor_class = self.targets[index]
-            neighbor_distance = self.distance(vector, np.array(row))
+            neighbor_distance = self.distance(vector, self.features[index])
             heapq.heappush(neighbors, (neighbor_distance, neighbor_class))
 
-        k_nearest = heapq.nlargest(self.k, neighbors) #take top k values off heap as the k nearest neighbors
-        k_nearest_classes = map(lambda tup: tup[1], k_nearest) #take only classes of the k nearest neighbors
+        k_nearest = heapq.nlargest(self.k, neighbors)  # Take top k values off heap as the k nearest neighbors
+        k_nearest_classes = map(lambda tup: tup[1], k_nearest)  # Take only classes of the k nearest neighbors
         most_common_class = max(set(k_nearest_classes), k_nearest_classes.count)
         return most_common_class
 
