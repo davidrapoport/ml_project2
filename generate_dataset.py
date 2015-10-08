@@ -61,11 +61,11 @@ def read_input_file():
             targets.append(int(features[2].strip()))
     return lines, targets
 
-lines, targets = read_input_file()
-
-output = np.zeros((len(targets),1))
-output[:,0] = targets
-np.save("data/targets", output)
+# lines, targets = read_input_file()
+#
+# output = np.zeros((len(targets),1))
+# output[:,0] = targets
+# np.save("data/targets", output)
 
 def _generate_dataset(vect_args, file_name, save_to_file=True):
     count_vect = CountVectorizer(**vect_args)
@@ -95,12 +95,12 @@ def generate_bigram_multinomial(save_to_file=True):
             file_name="data/bigram_multinomial", save_to_file=save_to_file)
 
 def generate_bigram_bernoulli(save_to_file=True):
-    return _generate_dataset({"decode_error":"ignore", "stop_words":stopwords, 
+    return _generate_dataset({"decode_error":"ignore", "stop_words":stopwords,
         "binary":True, "ngram_range":(1,2), "tokenizer":tokenize, "min_df":1},
             file_name="data/bigram_bernoulli", save_to_file=save_to_file)
 
 def generate_test1():
-    X = np.random.randn(10000,1)
+    X = np.random.randn(100,1)
     Y = X>0
     return csr_matrix(X), csr_matrix(Y.astype(int)), None
 
