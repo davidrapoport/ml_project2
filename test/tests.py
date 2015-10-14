@@ -1,6 +1,6 @@
 __author__ = 'Charlie'
 
-import classifiers.k_nearest_neighbor as kNN
+from classifiers import k_nearest_neighbor as kNN
 import unittest
 import generate_dataset
 
