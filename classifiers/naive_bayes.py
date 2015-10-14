@@ -12,9 +12,11 @@ class NaiveBayes(object):
         self.continuous = continuous
         self.bernoulli = bernoulli and (not multinomial and not continuous)
         
-    def train(self, features, targets):
+    def fit(self, features, targets):
         self.classes = list(np.unique(targets))
         self.num_classes = len(self.classes) 
+        self.classes_array = np.zeros((self.num_classes,1))
+        self.classes_array[:,0]=self.classes
         N,M = features.shape
         self.M = M
 
@@ -22,7 +24,7 @@ class NaiveBayes(object):
         self.py = np.zeros((self.num_classes,1)) #prob(yi)
         self.num_y = np.zeros((self.num_classes,1))
         for cnt,y in enumerate(self.classes):
-            self.num_y[cnt] = np.sum(targets==y)
+            self.num_y[cnt] = (targets==y).sum()
             self.py[cnt] = self.num_y[cnt]/N
         
         if self.bernoulli:
@@ -58,30 +60,32 @@ class NaiveBayes(object):
 
     def _train_multinomial(self, features, targets):
         # Train when all of the features are word counts
+        N,M = features.shape
         self.x_given_y = np.zeros((M, self.num_classes))
         self.totals = np.zeros((self.num_classes,1))
         targets_transpose = targets.transpose()[0]
         for cnt, y in enumerate(self.classes):
-            self.totals[i] = np.sum(features[(targets==y).flatten(), :])
-        for feature_num, feature_col in enumerate(features.transpose()):
-            for cnt, y in enumerate(self.classes):
-                x_in_class = feature_col[targets_transpose == y]
-                #uniform prior smoothing
-                self.x_given_y[feature_num, y] = (np.sum(x_in_class) + 1)/(self.totals[y] + features.shape[1]) 
+            self.totals[cnt] = features[(targets==y).flatten(), :].sum()
+            x_in_class = features[targets_transpose == y]
+            #uniform prior smoothing
+            self.x_given_y[:, y] = (x_in_class.sum(0) + 1)/(self.totals[y] + features.shape[1]) 
 
     def predict(self, observed):
-        totals = np.zeros((self.num_classes,1))
-        for cnt,y in enumerate(self.classes):
-            totals[cnt] = math.log(self.py[cnt]) 
-            if self.bernoulli: 
-                for feature_num, val in enumerate(observed):
-                    totals[cnt] += val*math.log(self.x_given_y[feature_num,cnt]) + (1-val)*math.log(1-self.x_given_y[feature_num,cnt])
-            elif self.multinomial:
-                for feature_num, val in enumerate(observed):
-                    totals[cnt] += val*math.log(self.x_given_y[feature_num,cnt])
-            else:
-                for feature_num, val in enumerate(observed):
-                    totals[cnt] += math.log(norm.pdf(val, loc=self.mean[feature_num,cnt], scale=self.std[feature_num,cnt]))
-        return self.classes[np.argmax(totals)]
+        N,M = observed.shape
+        totals = np.zeros((N,self.num_classes))
+        # add prior
+        totals += np.log(self.py).transpose()
+        if not self.continuous:
+            logs = np.log(self.x_given_y)
+            negs = np.log(1-self.x_given_y)
+        if self.bernoulli: 
+            totals += observed.dot(logs-negs) + negs.sum(axis=0)
+        elif self.multinomial:
+            totals += observed.dot(logs)
+        else:
+            totals += np.log(norm.pdf(observed, loc=self.mean, scale=self.std)).flatten()
+        return self.classes_array[np.argmax(totals,1)]
 
-
+    def score(self, X, y):
+        yp = self.predict(X)
+        return float((yp == y).sum())/y.shape[0]

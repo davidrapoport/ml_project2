@@ -23,7 +23,6 @@ lemmatizer = WordNetLemmatizer()
 pattern = r"(\d*),\"(.*)\",(\d*)"
 stopwords = list(stopwords.words("english"))
 stopwords.append("__EOS__")
-quick_n_dirty = True
 
 def tokenize(s):
     l = wordpunct_tokenize(s)
@@ -31,7 +30,7 @@ def tokenize(s):
 
 tokenize = wordpunct_tokenize #fix my screw up
 
-def read_input_file():
+def read_input_file(quick_n_dirty=True):
     ''' 
     Expects there to by a data/ml_dataset_train.csv file
     Returns a a tuple of (sentence, category) with the sentence
@@ -43,6 +42,7 @@ def read_input_file():
     with open("data/ml_dataset_train.csv", "r") as f:
         first = True
         for line in f:
+            count = 0
             if first or not line.strip():
                 first = False
                 continue
@@ -61,6 +61,9 @@ def read_input_file():
                 sent = " ".join(l)
                 lines.append(sent)
             else:
+                count +=1
+                if count>10000:
+                    break
                 lines.append(features[1].strip().lower())
             targets.append(int(features[2].strip()))
     return lines, targets
@@ -112,19 +115,19 @@ def generate_bigram_bernoulli(save_to_file=True):
 def generate_test1():
     X = np.random.randn(100,1)
     Y = X>0
-    return csr_matrix(X), csr_matrix(Y.astype(int)), None
+    return csr_matrix(X), (Y.astype(int)), None
 
 def generate_test2():
     X = np.random.random_integers(0,1,(10000,2))
     Y = np.logical_and(X[:,0],X[:,1])
-    return csr_matrix(X), csr_matrix(Y.astype(int)), None
+    return csr_matrix(X), Y.astype(int), None
 
 def generate_test3():
     X = np.random.random_integers(0,5,(10000,3))
     Y = np.zeros((10000,1))
     Y[:,0] = X.sum(1)
     Y = (Y>5).astype(int) + (Y>11).astype(int) 
-    return csr_matrix(X), csr_matrix(Y.astype(int)), None
+    return csr_matrix(X), Y.astype(int), None
 
 if __name__=='__main__':
     generate_unigram_multinomial()
