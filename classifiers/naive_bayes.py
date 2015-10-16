@@ -12,6 +12,9 @@ class NaiveBayes(object):
         self.continuous = continuous
         self.bernoulli = bernoulli and (not multinomial and not continuous)
         
+    def get_params(self, *args, **kwargs):
+        return {"l":self.l, "alpha":self.alpha, "multinomial":self.multinomial}
+
     def fit(self, features, targets):
         self.classes = list(np.unique(targets))
         self.num_classes = len(self.classes) 

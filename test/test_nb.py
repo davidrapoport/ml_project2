@@ -1,6 +1,6 @@
-from ..classifiers.naive_bayes import NaiveBayes
+from classifiers.naive_bayes import NaiveBayes
 from sklearn.naive_bayes import GaussianNB, BernoulliNB, MultinomialNB
-import ..generate_dataset as gd
+import generate_dataset as gd
 import pdb
 
 X,y, _ = gd.generate_test1()

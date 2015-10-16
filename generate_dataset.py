@@ -20,7 +20,8 @@ import nltk
 np.random.seed(1234)
 
 lemmatizer = WordNetLemmatizer()
-pattern = r"(\d*),\"(.*)\",(\d*)"
+pattern_train = r"(\d*),\"(.*)\",(\d*)"
+pattern_test = r"(\d*),\"(.*)\""
 stopwords = list(stopwords.words("english"))
 stopwords.append("__EOS__")
 
@@ -29,8 +30,12 @@ def tokenize(s):
     return [lemmatizer.lemmatize(word) for word in l if len(word)>2 and word.isalpha()]
 
 tokenize = wordpunct_tokenize #fix my screw up
+stopwords = set(stopwords)
 
-def read_input_file(quick_n_dirty=True):
+def lemmatize_and_cache(word, d={}):
+    return d.setdefault(word,lemmatizer.lemmatize(word))
+
+def read_input_file(quick_n_dirty=True, file_name="data/ml_dataset_train.csv", test_set=False):
     ''' 
     Expects there to by a data/ml_dataset_train.csv file
     Returns a a tuple of (sentence, category) with the sentence
@@ -39,25 +44,21 @@ def read_input_file(quick_n_dirty=True):
     '''
     lines = []
     targets = []
-    with open("data/ml_dataset_train.csv", "r") as f:
+    with open(file_name, "r") as f:
         first = True
+        count = 0
         for line in f:
-            count = 0
             if first or not line.strip():
                 first = False
                 continue
             if "\"" in line:
-                features = re.findall(pattern,line)[0]
+                features = re.findall(pattern_test if test_set else pattern_train,line)[0]
             else:
                 features = line.split(",")
             if not quick_n_dirty:
                 sent = features[1].strip().lower()
                 l = wordpunct_tokenize(sent)
-                
-                def lemmatize_and_cache(word, d={}):
-                    return d.setdefault(word,lemmatizer.lemmatize(word))
-
-                l = [lemmatize_and_cache(word) for word in l if len(word)>2 and word.isalpha()]
+                l = [lemmatize_and_cache(word) for word in l if len(word)>2 and word.isalpha() and word not in stopwords]
                 sent = " ".join(l)
                 lines.append(sent)
             else:
@@ -65,8 +66,11 @@ def read_input_file(quick_n_dirty=True):
                 if count>10000:
                     break
                 lines.append(features[1].strip().lower())
-            targets.append(int(features[2].strip()))
-    return lines, targets
+            if not test_set:
+                targets.append(int(features[2].strip()))
+    output = np.zeros((len(targets),1))
+    output[:,0] = targets
+    return lines, output
 
 lines, targets = [], []
 

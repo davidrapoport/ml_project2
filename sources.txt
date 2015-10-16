@@ -7,3 +7,6 @@ https://en.wikipedia.org/wiki/Tf%E2%80%93idf
 http://www.cs.rit.edu/~nan2563/feature_selection.pdf
 http://www.jmlr.org/papers/volume3/forman03a/forman03a_full.pdf
 http://machinelearning.wustl.edu/mlpapers/paper_files/NIPS2005_265.pdf
+http://nlp.stanford.edu/IR-book/html/htmledition/feature-selectionchi2-feature-selection-1.html
+http://www.jmlr.org/papers/volume3/guyon03a/guyon03a.pdf
+http://www.public.asu.edu/~huanliu/papers/ijcai07.pdf
