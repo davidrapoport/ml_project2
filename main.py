@@ -55,6 +55,14 @@ def score_classifiers(lines, targets, selections):
     return scores
 
 
+def output_predictions(estimator, train_lines, train_targets, test_lines):
+    pdb.set_trace()
+    estimator.fit(train_lines, train_targets.ravel())
+    ys = estimator.predict(test_lines).astype(int).ravel().tolist()
+    with open("out.csv","w") as out:
+        out.write("id,prediction\n\r")
+        out.write("\n\r".join([str(i)+","+str(pred) for i, pred in enumerate(ys)]))
+
 def main():
     test_set = False
     for name, count, p in pipelines:
@@ -66,9 +74,12 @@ def main():
     else:
         selections = [int(x.strip()) for x in l.split(",")]
         if len(selections) == 1:
-            print "\nEnter the location of the test set file, empty for training set"
+            print "\nEnter the location of the test set file,\nIf empty, no predictions will be output"
+            print "[d=data/ml_dataset_test_in.csv]"
             file_location = raw_input().strip()
             test_set = bool(file_location)
+            if file_location == "d":
+                file_location = "data/ml_dataset_test_in.csv"
             if test_set:
                 test_lines, _ = read_input_file(quick_n_dirty=False, file_name=file_location, test_set=test_set)
     lines, targets = read_input_file(quick_n_dirty=True)
@@ -79,7 +90,8 @@ def main():
     print "With parameters: "
     for param in best_combo[3].keys():
         print "\t" + param + ": " + str(best_combo[1].best_estimator_.get_params()[param])
-
+    if test_set:
+        output_predictions(estimator=best_combo[1].best_estimator_, train_lines=lines, train_targets=targets, test_lines=test_lines)
 
 if __name__=="__main__":
     main()
