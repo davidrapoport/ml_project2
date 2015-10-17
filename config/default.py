@@ -14,7 +14,7 @@ random.seed(1234)
 count_vect = CountVectorizer(decode_error="ignore")
 tfidf = TfidfVectorizer(decode_error="ignore")
 
-klearn.naive_bayes.MultinomialNBectorizers = [("count_vect", count_vect), ("tfidf", tfidf)]
+vectorizers = [("count_vect", count_vect), ("tfidf", tfidf)]
 vectorizers_params = [
                 {"count_vect__ngram_range":((1,1), (1,2)), "count_vect__binary":(True, False)},
                         {"tfidf__ngram_range":((1,1), (1,2))}]

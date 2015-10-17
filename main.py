@@ -51,7 +51,7 @@ def score_classifiers(lines, targets, selections):
         g.fit(train_lines, train_targets)
         score = g.score(test_lines, test_targets)
         print str(score) + ", " + str(pipelines[select][0])
-        scores.append((score, g, pipelines[select][1]))
+        scores.append((score, g, pipelines[select][1], params[select], pipelines[select][0]))
     #print scores
     return scores
 
@@ -73,7 +73,13 @@ def main():
             if test_set:
                 test_lines, _ = read_input_file(quick_n_dirty=False, file_name=file_location, test_set=test_set)
     lines, targets = read_input_file(quick_n_dirty=True)
-    best_classifier = score_classifiers(lines, targets, selections)
+    scores = score_classifiers(lines, targets, selections)
+    scores.sort(key=lambda x: -1*x[0])
+    best_combo = scores[0]
+    print "Best combination is "+ str(best_combo[4])
+    pdb.set_trace()
+    print "With parameters "
+
 
 if __name__=="__main__":
     main()
