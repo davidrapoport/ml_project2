@@ -36,7 +36,6 @@ for (v_name, vectorizer), v_params in zip(vectorizers,vectorizers_params):
 
 def score_classifiers(lines, targets, selections):
     scores = []
-    pdb.set_trace()
     lines_and_targets = list(zip(lines, targets))
     random.shuffle(lines_and_targets)
     lines, targets = zip(*lines_and_targets)
@@ -77,8 +76,9 @@ def main():
     scores.sort(key=lambda x: -1*x[0])
     best_combo = scores[0]
     print "Best combination is "+ str(best_combo[4])
-    pdb.set_trace()
-    print "With parameters "
+    print "With parameters: "
+    for param in best_combo[3].keys():
+        print "\t" + param + ": " + str(best_combo[1].best_estimator_.get_params()[param])
 
 
 if __name__=="__main__":
