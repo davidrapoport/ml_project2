@@ -5,6 +5,7 @@ from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import SVC
 
+from classifiers.k_nearest_neighbor import KNearestNeighbor
 from classifiers.naive_bayes import NaiveBayes
 
 import pdb, random
@@ -28,6 +29,7 @@ selectors_params = [{"percentile__percentile":(10,25,50)}]
 multinb = NaiveBayes(multinomial=True)
 svc = SVC()
 skmultinb = MultinomialNB()
+kNN = KNearestNeighbor()
 
 learners = [("multinomialNB",multinb),("svc", svc),("skmultinb",skmultinb)]
 learners_params = [{}, {}, {}]
