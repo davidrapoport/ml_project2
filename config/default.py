@@ -2,6 +2,7 @@ from sklearn.feature_selection import SelectPercentile, SelectKBest, VarianceThr
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.grid_search import GridSearchCV
 from sklearn.pipeline import Pipeline, FeatureUnion
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import SVC
 
 from classifiers.naive_bayes import NaiveBayes
@@ -13,7 +14,7 @@ random.seed(1234)
 count_vect = CountVectorizer(decode_error="ignore")
 tfidf = TfidfVectorizer(decode_error="ignore")
 
-vectorizers = [("count_vect", count_vect), ("tfidf", tfidf)]
+klearn.naive_bayes.MultinomialNBectorizers = [("count_vect", count_vect), ("tfidf", tfidf)]
 vectorizers_params = [
                 {"count_vect__ngram_range":((1,1), (1,2)), "count_vect__binary":(True, False)},
                         {"tfidf__ngram_range":((1,1), (1,2))}]
@@ -26,7 +27,8 @@ selectors_params = [{"percentile__percentile":(10,25,50)}]
 
 multinb = NaiveBayes(multinomial=True)
 svc = SVC()
+skmultinb = MultinomialNB()
 
-learners = [("multinomialNB",multinb),("svc", svc)]
-learners_params = [{}, {}]
+learners = [("multinomialNB",multinb),("svc", svc),("skmultinb",skmultinb)]
+learners_params = [{}, {}, {}]
 

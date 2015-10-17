@@ -66,29 +66,29 @@ class NaiveBayes(object):
         N,M = features.shape
         self.x_given_y = np.zeros((M, self.num_classes))
         self.totals = np.zeros((self.num_classes,1))
-        targets_transpose = targets.transpose()[0]
+        targets_transpose = targets
         for cnt, y in enumerate(self.classes):
             self.totals[cnt] = features[(targets==y).flatten(), :].sum()
-            x_in_class = features[targets_transpose == y]
+            x_in_class = features[targets_transpose == y, :]
             #uniform prior smoothing
-            self.x_given_y[:, y] = (x_in_class.sum(0) + 1)/(self.totals[y] + features.shape[1]) 
+            self.x_given_y[:, y] = np.log(x_in_class.sum(0) + self.l) - np.log(self.totals[y] + features.shape[1]*self.l) 
 
     def predict(self, observed):
         N,M = observed.shape
         totals = np.zeros((N,self.num_classes))
         # add prior
         totals += np.log(self.py).transpose()
-        if not self.continuous:
+        if self.bernoulli:
             logs = np.log(self.x_given_y)
             negs = np.log(1-self.x_given_y)
         if self.bernoulli: 
             totals += observed.dot(logs-negs) + negs.sum(axis=0)
         elif self.multinomial:
-            totals += observed.dot(logs)
+            totals += observed.dot(self.x_given_y)
         else:
             totals += np.log(norm.pdf(observed, loc=self.mean, scale=self.std)).flatten()
         return self.classes_array[np.argmax(totals,1)]
 
     def score(self, X, y):
-        yp = self.predict(X)
+        yp = self.predict(X).ravel()
         return float((yp == y).sum())/y.shape[0]

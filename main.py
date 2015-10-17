@@ -1,13 +1,8 @@
 import numpy as np
 from generate_dataset import read_input_file
 
-from sklearn.feature_selection import SelectPercentile, SelectKBest, VarianceThreshold
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.grid_search import GridSearchCV
-from sklearn.pipeline import Pipeline, FeatureUnion
-from sklearn.svm import SVC
-
-from classifiers.naive_bayes import NaiveBayes
+from sklearn.pipeline import Pipeline
 
 import pdb, random
 random.seed(1234)
@@ -41,6 +36,7 @@ for (v_name, vectorizer), v_params in zip(vectorizers,vectorizers_params):
 
 def score_classifiers(lines, targets, selections):
     scores = []
+    pdb.set_trace()
     lines_and_targets = list(zip(lines, targets))
     random.shuffle(lines_and_targets)
     lines, targets = zip(*lines_and_targets)
