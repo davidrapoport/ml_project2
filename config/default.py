@@ -8,6 +8,7 @@ from sklearn.feature_selection import chi2, f_classif
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 
+from classifiers.k_nearest_neighbor import KNearestNeighbor
 from classifiers.naive_bayes import NaiveBayes
 
 import pdb, random
