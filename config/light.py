@@ -5,8 +5,6 @@ from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import SVC
 from sklearn.feature_selection import chi2, f_classif
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.neighbors import KNeighborsClassifier
 
 from classifiers.naive_bayes import NaiveBayes
 
@@ -19,8 +17,8 @@ tfidf = TfidfVectorizer(decode_error="ignore")
 
 vectorizers = [("count_vect", count_vect), ("tfidf", tfidf)]
 vectorizers_params = [
-        {"count_vect__ngram_range":((1,1), (1,2)), "count_vect__binary":(True, False), "count_vect__min_df":(2,3,5), "count_vect__max_df":(0.3,0.5,0.75,1.0)},
-        {"tfidf__ngram_range":((1,1), (1,2)), "tfidf__min_df":(2,3,5), "tfidf__max_df":(0.3,0.5,0.75,1.0)}
+        {"count_vect__ngram_range":((1,1),), "count_vect__binary":(True,), "count_vect__min_df":(2,)},
+        {"tfidf__ngram_range":((1,1),), "tfidf__min_df":(2,)}
         ]
 
 
@@ -28,17 +26,11 @@ kbest = SelectKBest()
 percentile = SelectPercentile()
 
 selectors = [("percentile",percentile)]
-selectors_params = [{"percentile__percentile":(5,10,25,50,100), "percentile__score_func":(chi2, f_classif)}]
+selectors_params = [{"percentile__percentile":(10,), "percentile__score_func":(f_classif,)}]
 
 multinb = NaiveBayes(multinomial=True)
 svc = SVC()
-skmultinb = MultinomialNB()
-dec_tree = DecisionTreeClassifier()
-knn = KNeighborsClassifier()
 
-learners = [("multinb",skmultinb), ("dec_tree", dec_tree), ("knn",knn)]
-learners_params = [
-        {},
-        {"dec_tree__criterion":("gini","entropy")},
-        {"knn__weights":("uniform","distance"), "knn__n_neighbors":(2,5,10,25)}]
+learners = [("multinomialNB",multinb),("svc", svc)]
+learners_params = [{}, {}, {}]
 

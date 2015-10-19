@@ -46,7 +46,7 @@ def score_classifiers(lines, targets, selections):
     test_lines = lines[8*num_samples/10:]
     test_targets = targets[8*num_samples/10:].ravel()
     for select in selections:
-        g = GridSearchCV(pipelines[select][2], params[select])
+        g = GridSearchCV(pipelines[select][2], params[select], n_jobs=2)
         g.fit(train_lines, train_targets)
         score = g.score(test_lines, test_targets)
         print str(score) + ", " + str(pipelines[select][0])
@@ -82,7 +82,7 @@ def main():
                 file_location = "data/ml_dataset_test_in.csv"
             if test_set:
                 test_lines, _ = read_input_file(quick_n_dirty=False, file_name=file_location, test_set=test_set)
-    lines, targets = read_input_file(quick_n_dirty=True)
+    lines, targets = read_input_file(quick_n_dirty=False)
     scores = score_classifiers(lines, targets, selections)
     scores.sort(key=lambda x: -1*x[0])
     best_combo = scores[0]
