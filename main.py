@@ -46,7 +46,7 @@ def score_classifiers(lines, targets, selections):
     test_lines = lines[8*num_samples/10:]
     test_targets = targets[8*num_samples/10:].ravel()
     for select in selections:
-        g = GridSearchCV(pipelines[select][2], params[select], n_jobs=2)
+        g = GridSearchCV(pipelines[select][2], params[select], n_jobs=1)
         g.fit(train_lines, train_targets)
         score = g.score(test_lines, test_targets)
         print str(score) + ", " + str(pipelines[select][0])
@@ -56,7 +56,6 @@ def score_classifiers(lines, targets, selections):
 
 
 def output_predictions(estimator, train_lines, train_targets, test_lines):
-    pdb.set_trace()
     estimator.fit(train_lines, train_targets.ravel())
     ys = estimator.predict(test_lines).astype(int).ravel().tolist()
     with open("out.csv","w") as out:
