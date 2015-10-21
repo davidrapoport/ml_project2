@@ -98,15 +98,14 @@ def main():
         selections = list(range(len(pipelines)))
     else:
         selections = [int(x.strip()) for x in l.split(",")]
-        if len(selections) == 1:
-            print "\nEnter the location of the test set file,\nIf empty, no predictions will be output"
-            print "[d=data/ml_dataset_test_in.csv]"
-            file_location = raw_input().strip()
-            test_set = bool(file_location)
-            if file_location == "d":
-                file_location = "data/ml_dataset_test_in.csv"
-            if test_set:
-                test_lines, _ = read_input_file(quick_n_dirty=False, file_name=file_location, test_set=test_set)
+    print "\nEnter the location of the test set file,\nIf empty, no predictions will be output"
+    print "[d=data/ml_dataset_test_in.csv]"
+    file_location = raw_input().strip()
+    test_set = bool(file_location)
+    if file_location == "d":
+        file_location = "data/ml_dataset_test_in.csv"
+    if test_set:
+        test_lines, _ = read_input_file(quick_n_dirty=False, file_name=file_location, test_set=test_set)
     lines, targets = read_input_file(quick_n_dirty=False)
     scores = score_classifiers_percentage(lines, targets, selections)
     scores.sort(key=lambda x: -1*x[0])
