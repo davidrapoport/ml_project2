@@ -58,7 +58,6 @@ class KNearestNeighbor(object):
         :param observed: 2d numpy matrix of observed test points
         :return: 1d numpy matrix of predicted classifications
         """
-        #predictions = np.array(self.N)
         return np.apply_along_axis(self._classify, axis=1, arr=observed)
 
     def score(self, X, Y):
