@@ -89,9 +89,27 @@ class Word2VecVectorizer(CountVectorizer):
         if self.filter_type == "k_percent":
             self.selector = SelectPercentile(score_func=score_fun, percentile=self.k)
         elif self.filter_type == "top_k":
-            self.selector = SelectKBest(score_fun=score_fun, k=self.k)
+            self.selector = SelectKBest(score_func=score_fun, k=self.k)
         self.selector.fit(X, y)
 
     def transform(self, raw):
         X = super(Word2VecVectorizer, self).transform(raw)
         return self.selector.transform(X)
+
+    def generate_most_common_list(self, raw_docs):
+        X = super(Word2VecVectorizer, self).fit_transform(raw_docs)
+        feature_names = self.get_feature_names()
+        values = []
+        num_not_found = 0
+        for cnt, feature in enumerate(feature_names):
+            l = []
+            feature = feature.split()
+            for keyword in self.keywords:
+                try: 
+                    l.append(self.model.n_similarity([keyword], feature), keyword)
+                except:
+                    num_not_found += 1
+                    break
+            m = max(l, key= lambda s: s[0])
+            values.append(" ".join(feature), m[0], m[1], X[:, cnt].sum())
+        return num_not_found, values
