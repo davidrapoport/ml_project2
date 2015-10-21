@@ -1,10 +1,11 @@
-import numpy as np
-from generate_dataset import read_input_file
+import random
 
+import numpy as np
 from sklearn.grid_search import GridSearchCV
 from sklearn.pipeline import Pipeline
 
-import pdb, random
+from generate_dataset import read_input_file
+
 random.seed(1234)
 
 print "Enter the name of the config file in python import notation.\n File must be in config directory. [Default config.default]"
@@ -23,6 +24,7 @@ learners_params = imported.learners_params
 pipelines = []
 params = []
 
+
 count = 0
 for (v_name, vectorizer), v_params in zip(vectorizers,vectorizers_params):
     for (s_name, selector), s_params in zip(selectors, selectors_params):
@@ -33,6 +35,30 @@ for (v_name, vectorizer), v_params in zip(vectorizers,vectorizers_params):
             pipelines.append((name,count,Pipeline(p)))
             params.append(prms)
             count += 1
+
+
+def score_classifiers_percentage(lines, targets, selections, p=.01):
+    scores = []
+    lines_and_targets = list(zip(lines, targets))
+    random.shuffle(lines_and_targets)
+    num_samples = len(lines)
+    sample_size = int(float(num_samples) * p)
+    lines_and_targets_sample = [lines_and_targets[i] for i in sorted(random.sample(xrange(len(lines_and_targets)), sample_size)) ]
+    lines, targets = zip(*lines_and_targets_sample)
+    targets = np.vstack(targets)
+    num_samples = len(lines)
+    train_lines = lines[:8*num_samples/10]
+    train_targets = targets[:8*num_samples/10].ravel()
+    test_lines = lines[8*num_samples/10:]
+    test_targets = targets[8*num_samples/10:].ravel()
+    for select in selections:
+        g = GridSearchCV(pipelines[select][2], params[select], n_jobs=-1)
+        g.fit(train_lines, train_targets)
+        score = g.score(test_lines, test_targets)
+        print str(score) + ", " + str(pipelines[select][0])
+        scores.append((score, g, pipelines[select][1], params[select], pipelines[select][0]))
+    return scores
+
 
 def score_classifiers(lines, targets, selections):
     scores = []
@@ -82,7 +108,7 @@ def main():
             if test_set:
                 test_lines, _ = read_input_file(quick_n_dirty=False, file_name=file_location, test_set=test_set)
     lines, targets = read_input_file(quick_n_dirty=False)
-    scores = score_classifiers(lines, targets, selections)
+    scores = score_classifiers_percentage(lines, targets, selections)
     scores.sort(key=lambda x: -1*x[0])
     best_combo = scores[0]
     print "Best combination is "+ str(best_combo[4])
@@ -91,6 +117,7 @@ def main():
         print "\t" + param + ": " + str(best_combo[1].best_estimator_.get_params()[param])
     if test_set:
         output_predictions(estimator=best_combo[1].best_estimator_, train_lines=lines, train_targets=targets, test_lines=test_lines)
+
 
 if __name__=="__main__":
     main()
