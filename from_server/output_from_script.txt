@@ -1,0 +1,8 @@
+Best combination is count_vect percentile linsvc
+ With parameters
+	percentile__percentile 25
+	percentile__score_func <function chi2 at 0x7f8b746f0578>
+	count_vect__ngram_range (1, 1)
+	count_vect__max_df 0.5
+	count_vect__min_df 3
+	count_vect__binary False

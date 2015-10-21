@@ -110,6 +110,7 @@ class Word2VecVectorizer(CountVectorizer):
                 except:
                     num_not_found += 1
                     break
-            m = max(l, key= lambda s: s[0])
-            values.append(" ".join(feature), m[0], m[1], X[:, cnt].sum())
+            if l:
+                m = max(l, key= lambda s: s[0])
+                values.append(" ".join(feature), m[0], m[1], X[:, cnt].sum())
         return num_not_found, values

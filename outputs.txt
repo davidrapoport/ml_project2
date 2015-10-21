@@ -1,0 +1,10 @@
+0.723823833224, count_vect percentile cnb
+Best combination is count_vect percentile cnb
+With parameters: 
+	percentile__percentile: 50
+	percentile__score_func: <function chi2 at 0x7f697c3208c0>
+	count_vect__ngram_range: (1, 2)
+	count_vect__max_df: 1.0
+	count_vect__min_df: 2
+	count_vect__binary: False
+	cnb__alpha: 1.0
