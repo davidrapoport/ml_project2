@@ -4,7 +4,7 @@ import numpy as np
 from gensim.models import word2vec
 import pdb
 
-DEFAULT_KEYWORDS = ["politics", "movie", "sport", "music", "nature", "family"]
+DEFAULT_KEYWORDS = ["movie", "author", "music"]
 model = word2vec.Word2Vec.load_word2vec_format("./data/vectors.bin", binary=True)
 
 class Word2VecVectorizer(CountVectorizer):

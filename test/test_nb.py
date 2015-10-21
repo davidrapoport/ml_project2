@@ -5,6 +5,7 @@ import generate_dataset as gd
 import pdb, unittest
 import numpy as np
 import random
+import math
 random.seed(1234)
 
 lines, targets = gd.read_input_file(quick_n_dirty=True)
@@ -35,6 +36,8 @@ class NBTest(unittest.TestCase):
         self.skmnb = MultinomialNB()
         self.bnb = NaiveBayes(bernoulli=True)
         self.skbnb = BernoulliNB()
+        self.cnb = NaiveBayes(multinomial=True, cnb=True)
+        self.wcnb = NaiveBayes(multinomial=True, wcnb=True)
 
     def test_count_vectorized(self):
         self.mnb.fit(X_count, train_targets)
@@ -46,3 +49,18 @@ class NBTest(unittest.TestCase):
         self.skmnb.fit(X_tfidf, train_targets)
         self.assertEqual(self.mnb.score(X_tfidf_test, test_targets), self.skmnb.score(X_tfidf_test, test_targets))
 
+    def test_cnb(self):
+        self.cnb.fit(X_count, train_targets)
+        self.mnb.fit(X_count, train_targets)
+        cnb_score = self.cnb.score(X_count_test, test_targets)
+        mnb_score = self.mnb.score(X_count_test, test_targets)
+        print "CNB: {},   MNB: {}".format(cnb_score, mnb_score)
+        assert (cnb_score - mnb_score) > -0.1  
+
+    def test_wcnb(self):
+        self.wcnb.fit(X_count, train_targets)
+        self.mnb.fit(X_count, train_targets)
+        wcnb_score = self.wcnb.score(X_count_test, test_targets)
+        mnb_score = self.mnb.score(X_count_test, test_targets)
+        print "WCNB: {},   MNB: {}".format(wcnb_score, mnb_score)
+        assert (wcnb_score - mnb_score) > -0.5  
