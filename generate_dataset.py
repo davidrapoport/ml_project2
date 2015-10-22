@@ -25,6 +25,9 @@ pattern_test = r"(\d*),\"(.*)\""
 stopwords = list(stopwords.words("english"))
 stopwords.append("__EOS__")
 
+sw = ["right", "love", "people", "feel", "yeah", "one", "see", "something", "want", "year", "yes", "still", "kind", "really", "even", "little", "said", "thank", "would", "make", "two", "actually", "also", "much", "take", "way", "time", "new", "tell", "sort", "life", "good", "around", "get", "never", "story", "back", "lot", "every", "know", "got", "put", "world", "wanted", "come", "day", "look", "going", "great", "made", "like", "called", "many", "could", "work", "well", "say", "different", "thought", "thing", "didn", "part", "came", "always", "let", "went", "first", "think", "talk", "mean"]
+stopwords = stopwords + sw
+
 def tokenize(s):
     l = wordpunct_tokenize(s)
     return [lemmatizer.lemmatize(word) for word in l if len(word)>2 and word.isalpha()]
