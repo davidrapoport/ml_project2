@@ -3,6 +3,8 @@ import random
 import numpy as np
 from sklearn.grid_search import GridSearchCV
 from sklearn.pipeline import Pipeline
+from sklearn.metrics import confusion_matrix, roc_curve
+import matplotlib.pyplot as plt
 
 from generate_dataset import read_input_file
 
@@ -36,15 +38,24 @@ for (v_name, vectorizer), v_params in zip(vectorizers,vectorizers_params):
             params.append(prms)
             count += 1
 
+#Code comes from scikit learn example
+def plot_confusion_matrix(cm, labels, title='Confusion matrix', cmap=plt.cm.Blues):
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(labels))
+    plt.xticks(tick_marks, labels, rotation=45)
+    plt.yticks(tick_marks, labels)
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+
 
 def score_classifiers_percentage(lines, targets, selections, p=.01):
     scores = []
     lines_and_targets = list(zip(lines, targets))
     random.shuffle(lines_and_targets)
-    num_samples = len(lines)
-    sample_size = int(float(num_samples) * p)
-    lines_and_targets_sample = [lines_and_targets[i] for i in sorted(random.sample(xrange(len(lines_and_targets)), sample_size)) ]
-    lines, targets = zip(*lines_and_targets_sample)
+    lines, targets = zip(*lines_and_targets)
     targets = np.vstack(targets)
     num_samples = len(lines)
     train_lines = lines[:8*num_samples/10]
@@ -77,7 +88,31 @@ def score_classifiers(lines, targets, selections):
         score = g.score(test_lines, test_targets)
         print str(score) + ", " + str(pipelines[select][0])
         scores.append((score, g, pipelines[select][1], params[select], pipelines[select][0]))
-    #print scores
+
+    graphs = raw_input("\nWant some dank graphs? (y/n)\n")
+    if graphs == 'y':
+        scores.sort(key=lambda x: -x[0])
+        best = scores[0][1].best_estimator_
+        yp = best.predict(test_lines)
+        
+        #Code stolen from Scikit learn example
+        cm = confusion_matrix(test_targets, yp)
+        np.set_printoptions(precision=2)
+        print 'Confusion matrix, without normalization'
+        print cm
+        plt.figure()
+        plot_confusion_matrix(cm, labels=['author', 'movie', 'music', 'other'])
+
+        # Normalize the confusion matrix by row (i.e by the number of samples
+        # in each class)
+        cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print 'Normalized confusion matrix'
+        print cm_normalized 
+        plt.figure()
+        plot_confusion_matrix(cm_normalized, labels=['author', 'movie', 'music', 'other'], title='Normalized confusion matrix')
+
+        plt.show()
+
     return scores
 
 
@@ -107,7 +142,7 @@ def main():
     if test_set:
         test_lines, _ = read_input_file(quick_n_dirty=False, file_name=file_location, test_set=test_set)
     lines, targets = read_input_file(quick_n_dirty=False)
-    scores = score_classifiers_percentage(lines, targets, selections)
+    scores = score_classifiers(lines, targets, selections)
     scores.sort(key=lambda x: -1*x[0])
     best_combo = scores[0]
     print "Best combination is "+ str(best_combo[4])

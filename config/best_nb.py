@@ -21,7 +21,7 @@ kbest = SelectKBest()
 percentile = SelectPercentile()
 
 selectors = [("percentile",percentile)]
-selectors_params = [{"percentile__percentile":(25,50,75,100), "percentile__score_func":(chi2,)}]
+selectors_params = [{"percentile__percentile":(50,), "percentile__score_func":(chi2,)}]
 
 multinb = NaiveBayes(multinomial=True, cnb=True)
 
