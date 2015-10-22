@@ -52,7 +52,6 @@ def plot_confusion_matrix(cm, labels, title='Confusion matrix', cmap=plt.cm.Blue
 
 
 def score_classifiers_percentage(lines, targets, selections, p=.01):
-    scores = []
     lines_and_targets = list(zip(lines, targets))
     random.shuffle(lines_and_targets)
     lines, targets = zip(*lines_and_targets)
@@ -69,6 +68,9 @@ def score_classifiers_percentage(lines, targets, selections, p=.01):
         print str(score) + ", " + str(pipelines[select][0])
         scores.append((score, g, pipelines[select][1], params[select], pipelines[select][0]))
     return scores
+    lines_and_targets_sample = [lines_and_targets[i] for i in sorted(random.sample(xrange(len(lines_and_targets)), sample_size)) ]
+    lines, targets = zip(*lines_and_targets_sample)
+    return score_classifiers(lines, targets, selections)
 
 
 def score_classifiers(lines, targets, selections):
