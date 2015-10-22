@@ -38,26 +38,10 @@ for (v_name, vectorizer), v_params in zip(vectorizers,vectorizers_params):
 
 
 def score_classifiers_percentage(lines, targets, selections, p=.01):
-    scores = []
     lines_and_targets = list(zip(lines, targets))
-    random.shuffle(lines_and_targets)
-    num_samples = len(lines)
-    sample_size = int(float(num_samples) * p)
     lines_and_targets_sample = [lines_and_targets[i] for i in sorted(random.sample(xrange(len(lines_and_targets)), sample_size)) ]
     lines, targets = zip(*lines_and_targets_sample)
-    targets = np.vstack(targets)
-    num_samples = len(lines)
-    train_lines = lines[:8*num_samples/10]
-    train_targets = targets[:8*num_samples/10].ravel()
-    test_lines = lines[8*num_samples/10:]
-    test_targets = targets[8*num_samples/10:].ravel()
-    for select in selections:
-        g = GridSearchCV(pipelines[select][2], params[select], n_jobs=-1)
-        g.fit(train_lines, train_targets)
-        score = g.score(test_lines, test_targets)
-        print str(score) + ", " + str(pipelines[select][0])
-        scores.append((score, g, pipelines[select][1], params[select], pipelines[select][0]))
-    return scores
+    return score_classifiers(lines, targets, selections)
 
 
 def score_classifiers(lines, targets, selections):
